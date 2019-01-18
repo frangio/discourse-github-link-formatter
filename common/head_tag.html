@@ -1,0 +1,68 @@
+<script type="text/discourse-plugin" version="0.1">
+  const patterns = {
+    repo: /^https?:\/\/(?:www.)?github.com\/([\w-]+\/[\w-]+)(?:\/(.*))$/,
+    issue: /^(?:issues|pull)\/(\d+)$/,
+    commit: /^commit\/([0-9a-f]{7,40})$/,
+  };
+
+  function match(url) {
+    const repoMatches = url.match(patterns.repo);
+
+    if (repoMatches) {
+      const [_, repo, tail] = matches;
+
+      const issueMatches = tail.match(patterns.issue);
+      const commitMatches = tail.match(patterns.commit);
+
+      if (issueMatches) {
+        const [_, number] = issueMatches;
+        return { type: 'issue', repo, number };
+      }
+
+      if (commitMatches) {
+        const [_, hash] = commitMatches;
+        return { type: 'commit', repo, hash };
+      } 
+      
+      // else
+      return { type: 'repo', repo };
+    }
+  }
+
+  function format(matches) {
+    switch (matches.type) {
+      case 'repo':
+        const { repo } = matches;
+        return repo;
+
+      case 'issue':
+        const { repo, number } = matches;
+        return `${repo}#${number}`;
+
+      case 'commit':
+        const { repo, hash } = matches;
+        const shortHash = hash.slice(7);
+        return `${repo}@${shortHash}`;
+    }
+  }
+
+  function reformatElement() {
+    const $elem = $(this);
+
+    const href = $elem.attr('href');
+
+    const shouldFormat = href === $elem.html();
+
+    if (shouldFormat) {
+      const matches = match(href);
+
+      if (matches) {
+        const text = format(matches);
+
+        $elem.html(text);
+      }
+    }
+  }
+
+  api.decorateCooked($elem => $elem.find('a').each(reformatElement));
+</script>
