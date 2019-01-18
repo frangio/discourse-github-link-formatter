@@ -30,19 +30,20 @@
   }
 
   function format(matches) {
-    switch (matches.type) {
-      case 'repo':
-        const { repo } = matches;
-        return repo;
+    if (matches.type === 'repo') {
+      const { repo } = matches;
+      return repo;
+    }
 
-      case 'issue':
-        const { repo, number } = matches;
-        return `${repo}#${number}`;
+    if (matches.type === 'issue') {
+      const { repo, number } = matches;
+      return `${repo}#${number}`;
+    }
 
-      case 'commit':
-        const { repo, hash } = matches;
-        const shortHash = hash.slice(7);
-        return `${repo}@${shortHash}`;
+    if (matches.type === 'commit') {
+      const { repo, hash } = matches;
+      const shortHash = hash.slice(7);
+      return `${repo}@${shortHash}`;
     }
   }
 
