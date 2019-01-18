@@ -9,23 +9,24 @@
     const repoMatches = url.match(patterns.repo);
 
     if (repoMatches) {
-      const [_, repo, tail] = matches;
+      const [_, repo, tail] = repoMatches;
 
-      const issueMatches = tail.match(patterns.issue);
-      const commitMatches = tail.match(patterns.commit);
+      if (!tail) {
+        return { type: 'repo', repo };
+      } else {
+        const issueMatches = tail.match(patterns.issue);
+        const commitMatches = tail.match(patterns.commit);
 
-      if (issueMatches) {
-        const [_, number] = issueMatches;
-        return { type: 'issue', repo, number };
+        if (issueMatches) {
+          const [_, number] = issueMatches;
+          return { type: 'issue', repo, number };
+        }
+
+        if (commitMatches) {
+          const [_, hash] = commitMatches;
+          return { type: 'commit', repo, hash };
+        }
       }
-
-      if (commitMatches) {
-        const [_, hash] = commitMatches;
-        return { type: 'commit', repo, hash };
-      } 
-      
-      // else
-      return { type: 'repo', repo };
     }
   }
 
