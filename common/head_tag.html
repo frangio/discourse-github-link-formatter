@@ -44,7 +44,7 @@
     if (matches.type === 'commit') {
       const { repo, hash } = matches;
       const shortHash = hash.slice(0, 7);
-      return `${repo}@${shortHash}`;
+      return `${repo}@<code>${shortHash}</code>`;
     }
   }
 
