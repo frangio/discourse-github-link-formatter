@@ -53,16 +53,14 @@
 
     const href = $elem.attr('href');
 
-    const shouldFormat = href === $elem.html();
+    const matches = match(href);
 
-    if (shouldFormat) {
-      const matches = match(href);
+    if (matches) {
+      const text = format(matches);
 
-      if (matches) {
-        const text = format(matches);
-
-        $elem.html(text);
-      }
+      $elem.contents()
+        .filter((_, elem) => elem.nodeValue === href)
+        .each((_, elem) => elem.nodeValue = text);
     }
   }
 
